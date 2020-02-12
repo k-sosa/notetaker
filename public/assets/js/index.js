@@ -5,7 +5,7 @@ const $newNoteBtn = $(".new-note");
 const $noteList = $(".list-container .list-group");
 
 // activeNote is used to keep track of the note in the textarea
-const activeNote = {};
+let activeNote = {};
 
 // A function for getting all notes from the db
 const getNotes = function() {
@@ -27,7 +27,7 @@ const saveNote = function(note) {
 // A function for deleting a note from the db
 const deleteNote = function(id) {
   return $.ajax({
-    url: "api/notes/" + id,
+    url: "/api/notes/" + id,
     method: "DELETE"
   });
 };
@@ -67,15 +67,13 @@ const handleNoteDelete = function(event) {
   // prevents the click listener for the list from being called when the button inside of it is clicked
   event.stopPropagation();
 
-  const note = $(this)
-    .parent(".list-group-item")
-    .data();
+  let noteid = $(this).attr("data-id")
 
-  if (activeNote.id === note.id) {
+  if (activeNote.id === noteid) {
     activeNote = {};
   }
 
-  deleteNote(note.id).then(function() {
+  deleteNote(noteid).then(function() {
     getAndRenderNotes();
     renderActiveNote();
   });
@@ -106,16 +104,16 @@ const handleRenderSaveBtn = function() {
 // Render's the list of note titles
 const renderNoteList = function(notes) {
   $noteList.empty();
-
+console.log(notes)
   const noteListItems = [];
 
-  for (const i = 0; i < notes.length; i++) {
-    const note = notes[i];
+  for (let i = 0; i < notes.length; i++) {
+    let note = notes[i];
 
-    const $li = $("<li class='list-group-item'>").data(note);
-    const $span = $("<span>").text(note.title);
-    const $delBtn = $(
-      "<i class='fas fa-trash-alt float-right text-danger delete-note'>"
+    let $li = $("<li class='list-group-item'>").data(note);
+    let $span = $("<span>").text(note.title);
+    let $delBtn = $(
+      "<i class='fas fa-trash-alt float-right text-danger   delete-note' data-id='"+note.id+"' >"
     );
 
     $li.append($span, $delBtn);
